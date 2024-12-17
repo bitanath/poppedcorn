@@ -31,7 +31,6 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
             <PixelText size={2} color="#7193FF">plot summary</PixelText>
           </hstack>
         </vstack>
-        <text size='small'>Version: {version}</text>
         <spacer size='large'></spacer>
         <hstack gap="medium">
           <button appearance="media" onPress={() => setPage("leaderboard")}>
