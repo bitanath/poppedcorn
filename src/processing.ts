@@ -44,7 +44,6 @@ export async function getMovieFromFilmPlotBadly(reddit:RedditAPIClient,index:num
             return comment.isStickied()
         })
 
-        console.log("Got sticky comments",filtered.length)
         
         let results = []
         for(const comment of filtered){
@@ -63,7 +62,7 @@ export async function getMovieFromFilmPlotBadly(reddit:RedditAPIClient,index:num
             }
             const solution = await reddit.getCommentById(`t1_${commentHash}`)
             let answer = solution.body
-            console.log(question,answer)
+            
             if(!answer||hasNonAlphabeticChars(answer)){
                 continue
             }
@@ -85,7 +84,6 @@ export async function getMovieFromFilmPlotBadly(reddit:RedditAPIClient,index:num
             results.push({question,answer})
         }
         
-        console.log("Got results",results.length)
         const similar = results.length > 1 ? results.map(e=>e.answer) : []
         results = results.length > index ? results.slice(index,index+1) : results
         const actual = results[0].answer
@@ -121,7 +119,6 @@ export async function getLeaderboardUsers(reddit: RedditAPIClient,leaderboard:Ar
         try{
             const {member,score} = userObject
             const user = await reddit.getUserById(member)
-            console.log("Checking for ",currentUserId,member,user?.id,currentUserRanked,rank,score)
             if(!user){continue}
             const avatar = await user.getSnoovatarUrl() || "https://www.redditstatic.com/avatars/avatar_default_02_FF4500.png"
             
@@ -142,7 +139,6 @@ export async function getLeaderboardUsers(reddit: RedditAPIClient,leaderboard:Ar
 
     if(!currentUserRanked && currentUserId){
         const user = await reddit.getUserById(currentUserId)
-        console.log("Ranking for current user",currentUserId,user?.id,currentUserRanked,currentUserRank)
         if(!user){return results}
         const avatar = await user.getSnoovatarUrl() || "https://www.redditstatic.com/avatars/avatar_default_02_FF4500.png"
         results.push({

@@ -96,7 +96,6 @@ Devvit.addCustomPostType({
       Object.entries(movieMap).forEach(([key, value]) => { total++;solved += parseInt(value); });
       let difficulty = calculatePercentage(solved,total)
 
-      console.log("Got percentage difficulty for movie",selected.name,difficulty,"with similar ones at", similar.map(e=>e.name))
       return {username,selected,similar,difficulty}
     },{depends: pageIndex});
 

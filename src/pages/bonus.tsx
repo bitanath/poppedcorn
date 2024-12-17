@@ -19,7 +19,6 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
     const { data: message, loading, error } = useAsync(async () => {
         const {actual,similar,description} = await getMovieFromFilmPlotBadly(context,index,message?.actual)
         const emoji = await getMovieFromEmoji()
-        console.log("Got a just like that ",emoji)
         return {actual,similar,description,emoji}   
     },{depends:index})
 
