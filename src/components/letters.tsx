@@ -1,9 +1,9 @@
 import {Devvit, useState} from '@devvit/public-api'
 
-export function Letters(props: {clicked:Array<[number,number]>,guess:Array<string>,actual:string,similar:Array<string>,addLetter:(letter:string,index:[number,number])=>void}): JSX.Element{
+export function Letters(props: {clicked:Array<[number,number]>,guess:Array<string>,actual:string,similar:Array<string>,addLetter:(letter:string,index:[number,number])=>void, hints:number}): JSX.Element{
     //Click variables
-    const {actual,similar} = props
-    const allLetterHints = findRequiredLetters(actual,similar)
+    const {actual,similar,hints} = props
+    const allLetterHints = filterLetterHints(findRequiredLetters(actual,similar),actual,Math.min(hints,3))
     const batchedLetterHints = createLetterBatches(allLetterHints)
     
     return (
@@ -39,7 +39,7 @@ function findPair(guessLength: number,arr: number[][], num1: number, num2: numbe
     );
 }
 
-function createLetterBatches(letters: string[]): string[][] {
+export function createLetterBatches(letters: string[]): string[][] {
     const maxBatchSize = 14;
     const batches: string[][] = [];
     let remainingLetters = [...letters];
@@ -51,133 +51,6 @@ function createLetterBatches(letters: string[]): string[][] {
     
     return batches;
 }
-
-
-function collectLetters(thisSentence: string, otherSentences: string[]): string[] {
-    let targetSentence = [...thisSentence].reverse().join('')
-    const getLetterCount = (str: string): Map<string, number> => {
-        const count = new Map<string, number>();
-        str.toLowerCase().replace(/[^a-z]/g, '').split('').forEach(char => {
-            count.set(char, (count.get(char) || 0) + 1);
-        });
-        return count;
-    };
-
-    
-    const targetCount = getLetterCount(targetSentence);
-    
-    let bestMatchCount = new Map<string, number>();
-    let bestMatch = '';
-    
-    otherSentences.forEach(sentence => {
-        const sentenceCount = getLetterCount(sentence);
-        let additionalLettersNeeded = 0;
-        
-        sentenceCount.forEach((count, letter) => {
-            const targetNeeds = targetCount.get(letter) || 0;
-            if (count > targetNeeds) {
-                additionalLettersNeeded += count - targetNeeds;
-            }
-        });
-        
-        if (!bestMatch || additionalLettersNeeded < bestMatchCount.size) {
-            bestMatch = sentence;
-            bestMatchCount = sentenceCount;
-        }
-    });
-
-    
-    const requiredLetters = new Map<string, number>();
-    
-    targetCount.forEach((count, letter) => {
-        requiredLetters.set(letter, count);
-    });
-
-    bestMatchCount.forEach((count, letter) => {
-        const currentCount = requiredLetters.get(letter) || 0;
-        if (count > currentCount) {
-            requiredLetters.set(letter, count);
-        }
-    });
-
-    
-    const letters: string[] = [];
-    
-    requiredLetters.forEach((count, letter) => {
-        for (let i = 0; i < count; i++) {
-            letters.push(letter);
-        }
-        
-        const extras = Math.min( Math.min(24 - letters.length,0),1); 
-        for (let i = 0; i < extras; i++) {
-            letters.push(letter);
-        }
-    });
-
-    return letters;
-}
-
-function subtractLetters(originalLetters: string[], lettersToRemove: string[]): string[] {
-    const removeCount = new Map<string, number>();
-    for (const letter of lettersToRemove) {
-        removeCount.set(letter, (removeCount.get(letter) || 0) + 1);
-    }
-
-    const result: string[] = [];
-    for (const letter of originalLetters) {
-        if (removeCount.has(letter) && removeCount.get(letter)! > 0) {
-            removeCount.set(letter, removeCount.get(letter)! - 1);
-        } else {
-            result.push(letter);
-        }
-    }
-
-    return result;
-}
-
-function findRequiredUniqueLetters(thisSentence: string, otherSentences: string[]): string[] {
-    const cleanSentence = thisSentence.toLowerCase().replace(/[^a-z]/g, '');
-    const cleanOtherSentences = otherSentences.map(s => 
-        s.toLowerCase().replace(/[^a-z]/g, '')
-    );
-
-    const mainLetterCount = new Map<string, number>();
-    for (const char of cleanSentence) {
-        mainLetterCount.set(char, (mainLetterCount.get(char) || 0) + 1);
-    }
-
-    let bestCombination: string[] = [];
-    let minTotalLetters = Infinity;
-
-    for (const otherSentence of cleanOtherSentences) {
-        const letterPool: string[] = [];
-        const seenInOther = new Set<string>();
-        
-        for (const char of cleanSentence) {
-            letterPool.push(char);
-        }
-
-        for (const char of otherSentence) {
-            if (!mainLetterCount.has(char) && !seenInOther.has(char)) {
-                letterPool.push(char);
-                seenInOther.add(char);
-            }
-        }
-
-        if (letterPool.length < minTotalLetters) {
-            minTotalLetters = letterPool.length;
-            bestCombination = letterPool;
-        }
-    }
-
-    
-    if (minTotalLetters > 28) {
-        return cleanSentence.split('').sort();
-    }
-
-    return bestCombination.sort();
-}
-
 
 
 function findRequiredLetters(thisSentence: string, otherSentences: string[]): string[] {
@@ -215,3 +88,44 @@ function findRequiredLetters(thisSentence: string, otherSentences: string[]): st
 
     return bestCombination.sort();
 }
+
+const filterLetterHints = (
+    allLetterHints: string[], 
+    actual: string, 
+    hintsCount: number
+): string[] => {
+    // Convert actual to lowercase array of characters
+    const actualLetters = [...actual.toLowerCase()];
+    
+    // Create a copy of allLetterHints to work with
+    let result = [...allLetterHints];
+    
+    // Track letters we've removed to handle duplicates
+    const removedCount: { [key: string]: number } = {};
+    let removedTotal = 0;
+    
+    // Remove letters from right to left
+    for (let i = result.length - 1; i >= 0; i--) {
+        const letter = result[i].toLowerCase();
+        
+        // Count how many times this letter appears in actual
+        const letterFrequencyInActual = actualLetters.filter(l => l === letter).length;
+        
+        // Initialize removal counter for this letter
+        removedCount[letter] = removedCount[letter] || 0;
+        
+        // If letter isn't in actual OR we've already kept enough of this letter
+        if (!actualLetters.includes(letter) || 
+            (removedCount[letter] < (result.filter(l => l.toLowerCase() === letter).length - letterFrequencyInActual))) {
+            
+            // Only remove if we haven't hit our hints limit
+            if (removedTotal < hintsCount) {
+                result.splice(i, 1);
+                removedCount[letter]++;
+                removedTotal++;
+            }
+        }
+    }
+    
+    return result;
+};

@@ -51,6 +51,7 @@ Devvit.addCustomPostType({
     const [guess, setGuess] = useState<Array<string>>([])
     const [clicked,setClicked] = useState<Array<[number,number]>>([])
     const [hinted, setHinted] = useState<boolean>(false)
+    const [hints,setHints] = useState(0)
     const [celebration, setCelebration] = useState<boolean>(false)
 
 
@@ -63,7 +64,7 @@ Devvit.addCustomPostType({
 
       
       if(!user || !user.id){
-        //TODO: simply fetch a movie different from the current one
+        //NOTE: simply fetch a movie different from the current one
         const currentMovie = message?.selected.hash
         if(currentMovie){moviesSeen.push(currentMovie)}
         const returnedMovie = await getMovie(moviesSeen) 
@@ -93,11 +94,13 @@ Devvit.addCustomPostType({
       const movieMap = await _context.redis.hGetAll(selected.hash)
       let total = 1,solved = 1
       
-      Object.entries(movieMap).forEach(([key, value]) => { total++;solved += parseInt(value); });
+      Object.entries(movieMap).forEach(([_, value]) => { total++;solved += parseInt(value); });
       let difficulty = calculatePercentage(solved,total)
 
       return {username,selected,similar,difficulty}
-    },{depends: pageIndex});
+    },{depends: pageIndex, finally: ()=>{
+        addLetter(null)
+    }});
 
     function addLetter(letter:string|null,index?:[number,number]|undefined){
       setCelebration(false)
@@ -109,10 +112,10 @@ Devvit.addCustomPostType({
         const newGuess = [...guess,letter]
 
         if(message && message.selected.name.replace(/[^a-z]/ig,'').toUpperCase() == newGuess.join("").toUpperCase()){
+          setGuess(newGuess)
+          index && setClicked([...clicked,index])
+          setHints(0)
           setCelebration(true)
-          setPageIndex(pageIndex+1)
-          setGuess([])
-          setClicked([])
         }else if(message && compareStrings(message.selected.name.replace(/[^a-z]/ig,'').toUpperCase(),newGuess.join("").toUpperCase())){
           let array = JSON.parse(JSON.stringify(newGuess));
           let spliced = [...array.slice(0, -2), array[array.length - 1]]
@@ -123,13 +126,13 @@ Devvit.addCustomPostType({
           }else{
             setGuess([])
             setClicked([])
-            showToast("WHOOPS: You're going down the wrong track. Resetting all Letters! Please guess again.")
+            showToast("WHOOPS: Going down the wrong track. Resetting all Letters!")
           }
         }else{
           setGuess(newGuess)
           index && setClicked([...clicked,index])
           if(!hinted){
-            showToast("NOTE: Please guess the Full movie name with Numbers in English (example...Jaws Two)")
+            showToast("NOTE: Guess Full Name with numbers (example...Jaws Two)")
             setHinted(true)
           }
         }
@@ -152,13 +155,7 @@ Devvit.addCustomPostType({
       case 'bonus':
         return (<Bonus setPage={setPage} dimensions={dimensions} context={_context.reddit}></Bonus>)
       default:
-        return (
-          <zstack width="100%" height="100%" alignment='center middle'>
-            <Game pageIndex={pageIndex} setIndex={setPageIndex} loading={loading} dimensions={dimensions} setPage={setPage} addLetter={addLetter} guess={guess} message={message} version={version} clicked={clicked}></Game>
-            {celebration && loading && <image url="confetti.gif" imageWidth={512} imageHeight={512} width="100%" height="100%" resizeMode='cover'></image>}
-            {!celebration && loading && <image url="popcorntime.gif" imageWidth={150} imageHeight={150} resizeMode='fit'></image>}
-          </zstack>
-        )
+        return (<Game pageIndex={pageIndex} setIndex={setPageIndex} loading={loading} dimensions={dimensions} setPage={setPage} addLetter={addLetter} guess={guess} message={message} version={version} clicked={clicked} hints={hints} setHints={setHints} isCelebrating={celebration}></Game>)
     }
     
   },

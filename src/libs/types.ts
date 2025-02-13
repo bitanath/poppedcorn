@@ -11,9 +11,12 @@ export type GameNavigation = Navigation & {
     guess: Array<string>;
     addLetter: (letter: string|null) => void;
     setIndex: (index:number) => void;
+    setHints: (hints:number) => void;
+    isCelebrating: boolean;
     pageIndex: number;
     dimensions: {width: number,height: number};
     clicked: Array<[number,number]>;
+    hints: number;
 }
 
 export type BonusNavigation = {

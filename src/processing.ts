@@ -1,6 +1,7 @@
 import { Devvit, RedditAPIClient } from "@devvit/public-api";
 import { Movie,EmojiMovie,Similar } from "./libs/types.js";
 import { getEmojiMovie } from "./server/function.js";
+import { Glyphs } from "./libs/pixels.js";
 
 export function fnv1aHash(str:string) {
     let hash = 2166136261; // FNV offset basis
@@ -84,7 +85,8 @@ export async function getMovieFromFilmPlotBadly(reddit:RedditAPIClient,index:num
             results.push({question,answer})
         }
         
-        const similar = results.length > 1 ? results.map(e=>e.answer) : []
+        // const similar = results.length > 1 ? results.map(e=>e.answer) : []
+        const similar:string[] = [] //HACK: only show the required anagram for the movie when quessing from explain film plot badly
         results = results.length > index ? results.slice(index,index+1) : results
         const actual = results[0].answer
         const description = results[0].question
@@ -169,3 +171,45 @@ export function compareStrings(str1: string, str2: string): boolean {
 
     return false
 }
+
+export const formatRank = (rank:number) => {
+    return rank.toFixed(0).toString().padStart(2, ' ') + ".";
+};
+  
+
+const calculateStringWidth = (text: string): number => {
+    return text.split('').reduce((totalWidth: number, char: string) => {
+      return totalWidth + (Glyphs[char]?.width ?? 0);
+    }, 0);
+  };
+  
+export const formatGlyphText = (inputText: string, maxWidth: number = 120): string => {
+    let text = "u/"+inputText
+    if (!text) return text;
+  
+    const ellipsisWidth: number = calculateStringWidth('...');
+    let currentWidth: number = calculateStringWidth(text);
+  
+    //NOTE: If text fits, return as is
+    if (currentWidth <= maxWidth) {
+        const spacesNeeded: number = maxWidth - currentWidth;
+        return text + ' '.repeat(Math.ceil(spacesNeeded / Glyphs['*'].width));
+    }
+  
+    let truncatedText: string = '';
+    let width: number = 0;
+    
+    for (let i = 0; i < text.length; i++) {
+      const charWidth: number = Glyphs[text[i]]?.width ?? 0;
+      
+      if (width + charWidth + ellipsisWidth > maxWidth) {
+        return truncatedText + '...';
+      }
+      
+      width += charWidth;
+      truncatedText += text[i];
+    }
+
+    const spacesNeeded: number = maxWidth - width - 3;
+    return truncatedText +"..." + ' '.repeat(Math.ceil(spacesNeeded / Glyphs['*'].width));
+};

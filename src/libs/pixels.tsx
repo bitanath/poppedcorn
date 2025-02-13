@@ -75,7 +75,17 @@ export function PixelText(props: PixelTextProps): JSX.Element {
   );
 }
 
-const Glyphs = {
+interface GlyphChar {
+  path: string;
+  width: number;
+  height: number;
+}
+
+interface GlyphMap {
+  [key: string]: GlyphChar;
+}
+
+export const Glyphs:GlyphMap = {
     "0": {
       "path": "M5 0H1V1H0V5H1V6H5V5H6V1H5V0ZM4 1H2V3H3V4H2V5H4V3H3V2H4V1Z",
       "width": 6,

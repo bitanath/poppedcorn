@@ -20,7 +20,9 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
         const {actual,similar,description} = await getMovieFromFilmPlotBadly(context,index,message?.actual)
         const emoji = await getMovieFromEmoji()
         return {actual,similar,description,emoji}   
-    },{depends:index})
+    },{depends:index, finally:()=>{
+        addLetter(null)
+    }})
 
     function addLetter(letter:string|null,position?:[number,number]|undefined){
         setCelebration(false)
@@ -32,10 +34,12 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
           const newGuess = [...guess,letter]
           const actual = emojiMode && message ? message.emoji.actual : message ? message.actual : ""
           if(message && actual.replace(/[^a-z]/ig,'').toUpperCase() == newGuess.join("").toUpperCase()){
+            setGuess(newGuess)
+            position && setClicked([...clicked,position])
             setCelebration(true)
-            setIndex(index+1)
-            setGuess([])
-            setClicked([])
+            // setIndex(index+1)
+            // setGuess([])
+            // setClicked([])
           }else if(message && compareStrings(actual.replace(/[^a-z]/ig,'').toUpperCase(),newGuess.join("").toUpperCase())){
             let array = JSON.parse(JSON.stringify(newGuess));
             let spliced = [...array.slice(0, -2), array[array.length - 1]]
@@ -84,10 +88,10 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
                         {message && message.emoji && <hstack height={dimensions.height/2.25} width={dimensions.width/1.25}><text style='heading' weight='bold' size="xxlarge">{message.emoji.emoji}</text></hstack>}
                     </zstack>}
 
-                    {!emojiMode && message && <Letters clicked={clicked} actual={message.actual} similar={message.similar} guess={guess} addLetter={addLetter} ></Letters>}
-                    {emojiMode && message && <Letters clicked={clicked} actual={message.emoji.actual} similar={message.emoji.similar} guess={guess} addLetter={addLetter} ></Letters>}
+                    {!emojiMode && message && <Letters clicked={clicked} hints={0} actual={message.actual} similar={message.similar} guess={guess} addLetter={addLetter} ></Letters>}
+                    {emojiMode && message && <Letters clicked={clicked} hints={0} actual={message.emoji.actual} similar={message.emoji.similar} guess={guess} addLetter={addLetter} ></Letters>}
                     <spacer size='medium'></spacer>
-                    <hstack gap='medium'>
+                    {!celebration && <hstack gap='medium'>
                         <button appearance="media" onPress={() => setPage('cover') }>
                             🏠 Back Home
                         </button>
@@ -100,9 +104,17 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
                         <button appearance="media" onPress={()=> {setCelebration(false);setIndex(index+1);}}>
                             🍿 Pop Some More...
                         </button>
-                    </hstack>
+                    </hstack>}
                 </vstack>
-                {celebration && loading && <image url="confetti.gif" imageWidth={512} imageHeight={512} width="100%" height="100%" resizeMode='cover'></image>}
+                {celebration && <image url="confetti.gif" imageWidth={512} imageHeight={512} width="100%" height="100%" resizeMode='cover'></image>}
+                {celebration && 
+                <vstack height="100%" alignment='bottom center'>
+                    <hstack gap='small'>
+                        <button size='medium' icon='share-new' disabled={loading} appearance="primary" onPress={() => {setCelebration(false);setIndex(index+1)} }>Share on Sub</button>
+                        <button size='medium' icon='forward' disabled={loading} appearance="secondary" onPress={() => {setCelebration(false);setIndex(index+1)} }> Pop some more 🍿</button>
+                    </hstack>
+                    <spacer size='medium'></spacer>
+                </vstack>}
             </zstack>
         )
 }

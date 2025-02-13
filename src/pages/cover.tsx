@@ -31,13 +31,19 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
             <PixelText size={2} color="#7193FF">plot summary</PixelText>
           </hstack>
         </vstack>
+        <hstack alignment='center'>
+        <text size='small'>Ver. {version}</text>
+        </hstack>
         <spacer size='large'></spacer>
         <hstack gap="medium">
           <button appearance="media" onPress={() => setPage("leaderboard")}>
-            ⭐️ View Leaderboard
+            ⭐️ Leaderboard
           </button>
+          <button appearance="secondary" onPress={() => {setPage('bonus');}}>
+            🎬 Bonus Round
+            </button>
           <button appearance="primary" disabled={loading} onPress={() => { setPage("game") }}>
-            🍿 Let's Gooooo!
+            🍿 Let's Plaaay!
           </button>
         </hstack>
       </vstack>

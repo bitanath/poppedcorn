@@ -14,9 +14,7 @@ export function Description(props: {text:string,height:number,width:number}): JS
         )
 }
 
-function breakIntoLines(text: string): string[] {
-    const maxLength = 36;
-
+export function breakIntoLines(text: string,maxLength = 36): string[] {
     const words = text.split(' ').filter(word => word.length > 0);
     const lines: string[] = [];
     let currentLine = '';
