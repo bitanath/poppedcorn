@@ -32,7 +32,9 @@ export const Leaderboard = ({reddit,redis,pager,navigation}: {reddit:RedditAPICl
             <vstack height="85%" width="80%" gap="none" alignment="center" backgroundColor='#00000055' cornerRadius='large'>
                 <hstack height="10%" width="100%" gap="small" alignment='center middle' cornerRadius='none' backgroundColor='#00000022'>
                         <spacer size='small'></spacer>
+                        <image url="mcg.gif" imageHeight="32px" imageWidth="32px" resizeMode='fit'></image> 
                         <PixelText color='white' size={3}>TOP 10 LEADERBOARD</PixelText>
+                        <image url="mcg.gif" imageHeight="32px" imageWidth="32px" resizeMode='fit'></image> 
                         <spacer size='small'></spacer>
                 </hstack>
                 <vstack alignment='center top' height="100%" width="100%">

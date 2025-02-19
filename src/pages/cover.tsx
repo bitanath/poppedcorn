@@ -17,10 +17,10 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
           width="128px"
         />
         <vstack>
-          <PixelText size={6} color='white'>GUESS THAT</PixelText>
+          <PixelText size={6} color='#FFFFFF'>GUESS THAT</PixelText>
           <hstack gap="small">
-            <PixelText size={7} color="#ff4500">MOVIE</PixelText>
-            <PixelText size={7} color="#ff4500">_</PixelText>
+            <PixelText size={7} color="#FF4500">MOVIE</PixelText>
+            <PixelText size={7} color="#FF4500">_</PixelText>
           </hstack>
         </vstack>
         
@@ -36,11 +36,11 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
         </hstack>
         <spacer size='large'></spacer>
         <hstack gap="medium">
-          <button appearance="media" onPress={() => setPage("leaderboard")}>
+          <button appearance="secondary" onPress={() => setPage("leaderboard")}>
             ⭐️ Leaderboard
           </button>
-          <button appearance="secondary" onPress={() => {setPage('bonus');}}>
-            🎬 Bonus Round
+          <button appearance="media" onPress={() => {setPage('howto');}}>
+            🤔 How To
             </button>
           <button appearance="primary" disabled={loading} onPress={() => { setPage("game") }}>
             🍿 Let's Plaaay!

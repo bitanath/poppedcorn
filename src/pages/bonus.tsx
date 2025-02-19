@@ -80,16 +80,16 @@ export function Bonus({context,dimensions,setPage}: BonusNavigation): JSX.Elemen
                     {!emojiMode && message && <Answer name={message.actual} guess={guess}></Answer>}
                     {emojiMode && message && <Answer name={message.emoji.actual} guess={guess}></Answer>}
                     {!emojiMode && <zstack alignment="center middle">
-                        <image url="background.png" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image> 
+                        <image url="pixelit.png" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image> 
                         {message && message.description && <Description height={dimensions.height/2.25} width={dimensions.width/1.25} text={message.description}></Description>}
                     </zstack>}
                     {emojiMode && <zstack alignment="center middle">
-                        <image url="background.png" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image> 
+                        <image url="pixelit.png" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image> 
                         {message && message.emoji && <hstack height={dimensions.height/2.25} width={dimensions.width/1.25}><text style='heading' weight='bold' size="xxlarge">{message.emoji.emoji}</text></hstack>}
                     </zstack>}
 
-                    {!emojiMode && message && <Letters clicked={clicked} hints={0} actual={message.actual} similar={message.similar} guess={guess} addLetter={addLetter} ></Letters>}
-                    {emojiMode && message && <Letters clicked={clicked} hints={0} actual={message.emoji.actual} similar={message.emoji.similar} guess={guess} addLetter={addLetter} ></Letters>}
+                    {!emojiMode && message && <Letters clicked={clicked} actual={message.actual} similar={message.similar} guess={guess} addLetter={addLetter} ></Letters>}
+                    {emojiMode && message && <Letters clicked={clicked} actual={message.emoji.actual} similar={message.emoji.similar} guess={guess} addLetter={addLetter} ></Letters>}
                     <spacer size='medium'></spacer>
                     {!celebration && <hstack gap='medium'>
                         <button appearance="media" onPress={() => setPage('cover') }>

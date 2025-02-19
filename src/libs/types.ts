@@ -2,7 +2,7 @@ import { AsyncError, Devvit, JSONObject, RedditAPIClient } from "@devvit/public-
 
 export type Navigation = {
     setPage: (page: NavigationPages) => void;
-    message: {username: string,selected: Movie, similar: Array<any>, difficulty: number} | null;
+    message: {username: string,selected: Movie, emoji:string[], similar: Array<any>, difficulty: number, score: number, rank: number} | null;
     loading: boolean;
     version: string;
 }
@@ -11,12 +11,10 @@ export type GameNavigation = Navigation & {
     guess: Array<string>;
     addLetter: (letter: string|null) => void;
     setIndex: (index:number) => void;
-    setHints: (hints:number) => void;
     isCelebrating: boolean;
     pageIndex: number;
     dimensions: {width: number,height: number};
     clicked: Array<[number,number]>;
-    hints: number;
 }
 
 export type BonusNavigation = {
@@ -24,8 +22,6 @@ export type BonusNavigation = {
     dimensions: {width: number,height: number};
     context: RedditAPIClient;
 }
-
-
 
 export type Leader = {
     name: string;
@@ -41,11 +37,16 @@ export interface Movie extends JSONObject{
     hash: string;
     description: string;
     embedding: string;
+    funfact: string;
+    similar: string[];
+    emoji: string[];
 }
 
 export interface EmojiMovie extends JSONObject{
     emoji: string;
     embedding: string;
+    funfact: string;
+    similar: string[];
 }
 
 export interface Similar extends JSONObject{
@@ -55,5 +56,5 @@ export interface Similar extends JSONObject{
     similarity: number;
 }
 
-export type NavigationPages = 'cover' | 'game' | 'leaderboard' | 'bonus' | 'emoji'
+export type NavigationPages = 'cover' | 'game' | 'leaderboard' | 'bonus' | 'emoji' | 'howto'
 

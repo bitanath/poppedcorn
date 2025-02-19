@@ -1,9 +1,9 @@
 import {Devvit, useState} from '@devvit/public-api'
 
-export function Letters(props: {clicked:Array<[number,number]>,guess:Array<string>,actual:string,similar:Array<string>,addLetter:(letter:string,index:[number,number])=>void, hints:number}): JSX.Element{
+export function Letters(props: {clicked:Array<[number,number]>,guess:Array<string>,actual:string,similar:Array<string>,addLetter:(letter:string,index:[number,number])=>void}): JSX.Element{
     //Click variables
-    const {actual,similar,hints} = props
-    const allLetterHints = filterLetterHints(findRequiredLetters(actual,similar),actual,Math.min(hints,3))
+    const {actual,similar} = props
+    const allLetterHints = findRequiredLetters(actual,similar)
     const batchedLetterHints = createLetterBatches(allLetterHints)
     
     return (
@@ -14,7 +14,7 @@ export function Letters(props: {clicked:Array<[number,number]>,guess:Array<strin
                             <hstack gap='small' alignment='center'>
                                 {
                                     batch.map((letter,i)=>{
-                                        if(/[aeiou]/ig.test(letter)){
+                                        if(i%2==1){
                                             return (<button appearance='destructive' disabled={findPair(props.guess.length,props.clicked,j,i)} width="40px" height="40px" textColor='white' onPress={()=>{props.addLetter(letter,[j,i])}}>{letter.toUpperCase()}</button>)
                                         }else{
                                             return (<button appearance='primary' disabled={findPair(props.guess.length,props.clicked,j,i)} width="40px" height="40px" textColor='white' onPress={()=>{props.addLetter(letter,[j,i])}}>{letter.toUpperCase()}</button>)
@@ -94,31 +94,20 @@ const filterLetterHints = (
     actual: string, 
     hintsCount: number
 ): string[] => {
-    // Convert actual to lowercase array of characters
     const actualLetters = [...actual.toLowerCase()];
-    
-    // Create a copy of allLetterHints to work with
     let result = [...allLetterHints];
     
     // Track letters we've removed to handle duplicates
     const removedCount: { [key: string]: number } = {};
     let removedTotal = 0;
     
-    // Remove letters from right to left
     for (let i = result.length - 1; i >= 0; i--) {
         const letter = result[i].toLowerCase();
-        
-        // Count how many times this letter appears in actual
         const letterFrequencyInActual = actualLetters.filter(l => l === letter).length;
         
-        // Initialize removal counter for this letter
         removedCount[letter] = removedCount[letter] || 0;
-        
-        // If letter isn't in actual OR we've already kept enough of this letter
         if (!actualLetters.includes(letter) || 
             (removedCount[letter] < (result.filter(l => l.toLowerCase() === letter).length - letterFrequencyInActual))) {
-            
-            // Only remove if we haven't hit our hints limit
             if (removedTotal < hintsCount) {
                 result.splice(i, 1);
                 removedCount[letter]++;

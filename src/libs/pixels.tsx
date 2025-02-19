@@ -38,6 +38,7 @@ export function PixelText(props: PixelTextProps): JSX.Element {
     characters.push(`<path
       d="${glyph.path}"
       transform="translate(${xOffset} 0)"
+      fill="${props.color}"
       fill-rule="evenodd"
       clip-rule="evenodd"
     />`);
@@ -423,6 +424,16 @@ export const Glyphs:GlyphMap = {
     },
     ")": {
       "path": "M3 0H0V1H1V2H3V4H1V5H0V6H3V5H4V4H5V2H4V1H3V0Z",
+      "width": 5,
+      "height": 7
+    },
+    "<": {
+      "path": "M4 0H3V1H2V2H1V3H2V4H3V5H4V4H3V3H2V3H3V2H4V1H4V0Z",
+      "width": 6,
+      "height": 6
+    },
+    ">": {
+      "path": "M2 0H3V1H4V2H5V3H4V4H3V5H2V4H3V3H4V3H3V2H2V1H2V0Z",
       "width": 5,
       "height": 7
     },

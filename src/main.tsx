@@ -8,6 +8,7 @@ import { Cover } from './pages/cover.js';
 import { Game } from './pages/game.js';
 import { Bonus } from './pages/bonus.js';
 import { calculatePercentage,compareStrings,getLeaderboardUsers } from './processing.js';
+import { HowTo } from './pages/howto.js';
 
 Devvit.configure({
   redditAPI: true,
@@ -60,8 +61,10 @@ Devvit.addCustomPostType({
       const username = user?.username || "Guest"
       let moviesSeen:string[] = []
       let selected:Movie
-      let similar:Similar[]
-
+      let similar:string[]
+      let rank:number|undefined = undefined
+      let score:number|undefined = undefined
+      let emoji:string[] = []
       
       if(!user || !user.id){
         //NOTE: simply fetch a movie different from the current one
@@ -75,7 +78,8 @@ Devvit.addCustomPostType({
         if(celebration && message && message.selected){
           await _context.redis.hSet(user?.id,{[message.selected.hash]:'1'})
           await _context.redis.hSet(message.selected.hash,{[user.id]:'1'}) 
-          const score = await _context.redis.zScore('leaderboard', user.id)
+          score = await _context.redis.zScore('leaderboard', user.id)
+          rank = await _context.redis.zRank('leaderboard',user.id)
           const increment = message.difficulty < 30 ? 3 : message.difficulty < 60 ? 2 : 1
           if(!score){
             await _context.redis.zAdd('leaderboard',{member:user.id,score:increment})
@@ -96,8 +100,11 @@ Devvit.addCustomPostType({
       
       Object.entries(movieMap).forEach(([_, value]) => { total++;solved += parseInt(value); });
       let difficulty = calculatePercentage(solved,total)
+      score = score ? score : 0
+      rank = rank ? rank : 0
+      emoji = selected.emoji
 
-      return {username,selected,similar,difficulty}
+      return {username,selected,similar,emoji,difficulty,score,rank}
     },{depends: pageIndex, finally: ()=>{
         addLetter(null)
     }});
@@ -105,36 +112,40 @@ Devvit.addCustomPostType({
     function addLetter(letter:string|null,index?:[number,number]|undefined){
       setCelebration(false)
       if(letter == null){
+        setHints(0)
         setGuess([])
         setClicked([])
       }
       else{
         const newGuess = [...guess,letter]
+        const replacedName = message!.selected.name.replace(/[^a-z]/ig,'')
 
-        if(message && message.selected.name.replace(/[^a-z]/ig,'').toUpperCase() == newGuess.join("").toUpperCase()){
+        if(replacedName.toUpperCase() == newGuess.join("").toUpperCase()){
           setGuess(newGuess)
           index && setClicked([...clicked,index])
-          setHints(0)
           setCelebration(true)
-        }else if(message && compareStrings(message.selected.name.replace(/[^a-z]/ig,'').toUpperCase(),newGuess.join("").toUpperCase())){
+        }else if(compareStrings(replacedName.toUpperCase(),newGuess.join("").toUpperCase())){
+
           let array = JSON.parse(JSON.stringify(newGuess));
-          let spliced = [...array.slice(0, -2), array[array.length - 1]]
+          let spliced = [...array.slice(0, -2), array[array.length - 1]] //TODO: remove the second last letter instead of the last to handle typos
           
-          if(message.selected.name.replace(/[^a-z]/ig,'').toUpperCase().startsWith(spliced.join("").toUpperCase())){
+          if(replacedName.toUpperCase().startsWith(spliced.join("").toUpperCase())){
+            replacedName.toUpperCase() == spliced.join("").toUpperCase() ? setCelebration(true) : setCelebration(false)
             setGuess(spliced)
             index && setClicked([...clicked.slice(0, -1),index])
           }else{
             setGuess([])
             setClicked([])
-            showToast("WHOOPS: Going down the wrong track. Resetting all Letters!")
+            if(!hinted){
+              showToast("NOTE: Guess Full Name with numbers (example...Jaws Two)")
+              setHinted(true)
+            }else{
+              showToast("WHOOPS: Going down the wrong track. Resetting all Letters!")
+            }
           }
         }else{
           setGuess(newGuess)
           index && setClicked([...clicked,index])
-          if(!hinted){
-            showToast("NOTE: Guess Full Name with numbers (example...Jaws Two)")
-            setHinted(true)
-          }
         }
       }
     }
@@ -154,8 +165,10 @@ Devvit.addCustomPostType({
         return (<Leaderboard reddit={_context.reddit} redis={_context.redis} pager={setPage} navigation={openLink}></Leaderboard>)
       case 'bonus':
         return (<Bonus setPage={setPage} dimensions={dimensions} context={_context.reddit}></Bonus>)
+      case 'howto':
+        return (<HowTo pager={setPage} dimensions={dimensions}></HowTo>)
       default:
-        return (<Game pageIndex={pageIndex} setIndex={setPageIndex} loading={loading} dimensions={dimensions} setPage={setPage} addLetter={addLetter} guess={guess} message={message} version={version} clicked={clicked} hints={hints} setHints={setHints} isCelebrating={celebration}></Game>)
+        return (<Game pageIndex={pageIndex} setIndex={setPageIndex} loading={loading} dimensions={dimensions} setPage={setPage} addLetter={addLetter} guess={guess} message={message} version={version} clicked={clicked} isCelebrating={celebration}></Game>)
     }
     
   },

@@ -19,11 +19,19 @@ export function calculatePercentage(value: number, total: number): number {
     return roundedPercentage;
 }
 
+// export async function getMovieFromEmoji():Promise<{actual:string,description:string,similar:Array<string>,emoji:string}>{
+//     const {selected,similar}:{selected:EmojiMovie,similar:Array<Similar>} = await getEmojiMovie()
+//     const actual = selected.name as string
+//     const {emoji,description} = selected
+//     const result = {actual,emoji,description: description as string,similar:similar.map(s=>s.name)}
+//     return result
+// }
+
 export async function getMovieFromEmoji():Promise<{actual:string,description:string,similar:Array<string>,emoji:string}>{
-    const {selected,similar}:{selected:EmojiMovie,similar:Array<Similar>} = await getEmojiMovie()
+    const {selected,similar}:{selected:EmojiMovie,similar:Array<string>} = await getEmojiMovie()
     const actual = selected.name as string
     const {emoji,description} = selected
-    const result = {actual,emoji,description: description as string,similar:similar.map(s=>s.name)}
+    const result = {actual,emoji,description: description as string,similar:similar}
     return result
 }
 
@@ -157,14 +165,15 @@ export async function getLeaderboardUsers(reddit: RedditAPIClient,leaderboard:Ar
 
 }
 
-export function compareStrings(str1: string, str2: string): boolean {
-    const shorterLength = Math.min(str1.length, str2.length);
+export function compareStrings(name: string, guess: string): boolean {
+    const shorterLength = Math.min(name.length+1, guess.length);
     let mismatched = false
     for (let i = 0; i < shorterLength; i++) {
         if(mismatched){
-            return true;
+            return true; //HACK: mismatches only happen at the end so this kinda works
         }
-        if (str1[i] !== str2[i]) {
+
+        if (name[i] !== guess[i]) {
             mismatched = true;
         }
     }

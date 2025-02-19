@@ -12,7 +12,6 @@ export function Difficulty(props: {progress:number}): JSX.Element{
                     <spacer size='large'></spacer>
                     <image url={props.progress < 30? "gold_trophy.png" : props.progress < 60? "silver_trophy.png" : "bronze_trophy.png"} imageHeight="16px" imageWidth="16px" resizeMode='fit'></image> 
                     <hstack gap='small'>
-                        <PixelText color='black' size={1}>Difficulty: </PixelText>
                         <PixelText color='black' size={1}>{props.progress < 30? "HARD" : props.progress < 60? "MODERATE" : "EASY"}</PixelText>
                         <PixelText color='black' size={1}>{"("+props.progress.toFixed(0)+"%solved)"}</PixelText>
                     </hstack>

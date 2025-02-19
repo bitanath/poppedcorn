@@ -1,4 +1,5 @@
 ## 🍿 Popped Corn
+_<Actively working on this to make it crazy addictive>_
 
 A Guess The Movie Game with an interesting twist. Over 1000+ blockbuster top grossing movies to guess. Hollywood movies only. Have Fun!
 
