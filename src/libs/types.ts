@@ -17,12 +17,6 @@ export type GameNavigation = Navigation & {
     clicked: Array<[number,number]>;
 }
 
-export type BonusNavigation = {
-    setPage: (page: NavigationPages) => void;
-    dimensions: {width: number,height: number};
-    context: RedditAPIClient;
-}
-
 export type Leader = {
     name: string;
     id:  string;

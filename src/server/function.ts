@@ -1,8 +1,8 @@
 import { Movie,EmojiMovie } from '../libs/types.js';
 import untyped_movies from "./movies_all.json" with {type: "json"};
-import untyped_emoji_movies from "./movies_emoji.bkp.json" with {type: "json"}; //TODO: deprecate emoji movies by adding emoji to movies instead
+// import untyped_emoji_movies from "./movies_emoji.bkp.json" with {type: "json"}; //TODO: deprecate emoji movies by adding emoji to movies instead
 const movies = untyped_movies as Array<Movie>
-const movies_emoji = untyped_emoji_movies as Array<EmojiMovie>
+// const movies_emoji = untyped_emoji_movies as Array<EmojiMovie>
 const movie_db = movies.map(movie=>{
     const embedding = movie.embedding.split(",").map(parseFloat)
     const obj = {
@@ -14,17 +14,7 @@ const movie_db = movies.map(movie=>{
     return obj
 })
 
-// export async function getEmojiMovie():Promise<{selected:EmojiMovie,similar:Array<Similar>}>{
-//   let index = parseInt((Math.random() * movies_emoji.length).toFixed(0))
-//   let selected:EmojiMovie = movies_emoji[index]
-//   return {selected:selected,similar:getSimilarMovies(selected)}
-// }
 
-export async function getEmojiMovie():Promise<{selected:EmojiMovie,similar:Array<string>}>{
-  let index = parseInt((Math.random() * movies_emoji.length).toFixed(0))
-  let selected:EmojiMovie = movies_emoji[index]
-  return {selected:selected,similar:selected.similar}
-}
 
 // export async function getMovie(seen:string[]):Promise<{selected:Movie,similar:Array<Similar>}>{ 
 //     const set1 = new Set(seen);

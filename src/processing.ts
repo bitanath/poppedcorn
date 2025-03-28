@@ -1,6 +1,5 @@
 import { Devvit, RedditAPIClient } from "@devvit/public-api";
 import { Movie,EmojiMovie,Similar } from "./libs/types.js";
-import { getEmojiMovie } from "./server/function.js";
 import { Glyphs } from "./libs/pixels.js";
 
 export function fnv1aHash(str:string) {
@@ -19,21 +18,6 @@ export function calculatePercentage(value: number, total: number): number {
     return roundedPercentage;
 }
 
-// export async function getMovieFromEmoji():Promise<{actual:string,description:string,similar:Array<string>,emoji:string}>{
-//     const {selected,similar}:{selected:EmojiMovie,similar:Array<Similar>} = await getEmojiMovie()
-//     const actual = selected.name as string
-//     const {emoji,description} = selected
-//     const result = {actual,emoji,description: description as string,similar:similar.map(s=>s.name)}
-//     return result
-// }
-
-export async function getMovieFromEmoji():Promise<{actual:string,description:string,similar:Array<string>,emoji:string}>{
-    const {selected,similar}:{selected:EmojiMovie,similar:Array<string>} = await getEmojiMovie()
-    const actual = selected.name as string
-    const {emoji,description} = selected
-    const result = {actual,emoji,description: description as string,similar:similar}
-    return result
-}
 
 export async function getMovieFromFilmPlotBadly(reddit:RedditAPIClient,index:number,current:string|undefined):Promise<{actual:string,description:string,similar:Array<string>}>{
     //TODO: get movie from the r/ExplainAFilmPlotBadly
@@ -123,7 +107,7 @@ function hasNonAlphabeticChars(str:string) {
 export async function getLeaderboardUsers(reddit: RedditAPIClient,leaderboard:Array<{member:string;score:number}>,currentUserId:string|undefined,currentUserRank:number, currentUserScore: number){
     let results = [];
     let rank = 1
-    let currentUserRanked = leaderboard.filter(leader=>leader.member === currentUserId).length > 0
+    let currentUserRanked = leaderboard.slice(0,9).map(l=>l.member).includes(currentUserId||"")
     
     for(const userObject of leaderboard.sort((a,b)=>b.score-a.score)){
         try{
@@ -151,12 +135,13 @@ export async function getLeaderboardUsers(reddit: RedditAPIClient,leaderboard:Ar
         const user = await reddit.getUserById(currentUserId)
         if(!user){return results}
         const avatar = await user.getSnoovatarUrl() || "https://www.redditstatic.com/avatars/avatar_default_02_FF4500.png"
+        results = results.slice(0,9)
         results.push({
             name: user.username,
             id: user.id,
             url: user.url,
             score: currentUserScore,
-            rank: currentUserRank + 1,
+            rank: currentUserRank,
             avatar: avatar
         }) //Replace the last ranked user with the current one
     }

@@ -32,7 +32,7 @@ export const HowTo = (props: {pager:(name:NavigationPages)=>void,dimensions:{wid
                                             return (<hstack height="30%" width="100%" gap="small" alignment='start middle' cornerRadius='none' backgroundColor={index%2 === 0 ? '#00000088' : '#00000022'}>
                                                 <hstack width="15%" gap="small" alignment='start middle' cornerRadius='none'>
                                                     <spacer size='small'></spacer>
-                                                    <PixelText color='white' size={2}>Chonky Business</PixelText>
+                                                    <PixelText color='white' size={2}>WIP</PixelText>
                                                 </hstack>
                                                 <hstack width="85%" gap='small' alignment='center middle' cornerRadius='none'>
                                                     <PixelText color='white' size={2}>Images here</PixelText>

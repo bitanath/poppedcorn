@@ -6,7 +6,7 @@ import { Navigation, Similar,Movie, Leader } from './libs/types.js';
 import { Leaderboard } from './pages/leaderboard.js';
 import { Cover } from './pages/cover.js';
 import { Game } from './pages/game.js';
-import { Bonus } from './pages/bonus.js';
+// import { Bonus } from './pages/bonus.js';
 import { calculatePercentage,compareStrings,getLeaderboardUsers } from './processing.js';
 import { HowTo } from './pages/howto.js';
 
@@ -67,7 +67,7 @@ Devvit.addCustomPostType({
       let emoji:string[] = []
       
       if(!user || !user.id){
-        //NOTE: simply fetch a movie different from the current one
+        //NOTE: simply fetch a movie different from the current one if no user signed in (should never happen... unable to test)
         const currentMovie = message?.selected.hash
         if(currentMovie){moviesSeen.push(currentMovie)}
         const returnedMovie = await getMovie(moviesSeen) 
@@ -163,8 +163,8 @@ Devvit.addCustomPostType({
         return (<Cover setPage={setPage} message={message} loading={loading} version={version}></Cover>)
       case 'leaderboard':
         return (<Leaderboard reddit={_context.reddit} redis={_context.redis} pager={setPage} navigation={openLink}></Leaderboard>)
-      case 'bonus':
-        return (<Bonus setPage={setPage} dimensions={dimensions} context={_context.reddit}></Bonus>)
+      // case 'bonus':
+      //   return (<Bonus setPage={setPage} dimensions={dimensions} context={_context.reddit}></Bonus>)
       case 'howto':
         return (<HowTo pager={setPage} dimensions={dimensions}></HowTo>)
       default:

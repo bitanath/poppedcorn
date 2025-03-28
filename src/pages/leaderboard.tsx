@@ -10,16 +10,19 @@ export const Leaderboard = ({reddit,redis,pager,navigation}: {reddit:RedditAPICl
 
     const { data: message, loading, error } = useAsync(async () => {
         const user = await reddit.getCurrentUser()
-        const leaders = await redis.zRange('leaderboard', 0, 9, { by: 'rank' });
+        const leaders = await redis.zRange('leaderboard', 0, 9, { by: 'rank',reverse:true });
+        const total = await redis.zCard('leaderboard')
+        
         let leaderboard
         if(!user){
             leaderboard = await getLeaderboardUsers(reddit,leaders,undefined,0,0)
         }else{
-            const rank = await  redis.zRank('leaderboard',user.id)
-            const score = await redis.zScore('leaderboard',user.id)
-            leaderboard = await getLeaderboardUsers(reddit,leaders,user.id,rank||0,score||0)
+            let rank = await  redis.zRank('leaderboard',user.id)
+            let score = await redis.zScore('leaderboard',user.id)
+            rank = total-(rank||0) //TODO: calculate effective rank since all redis leaderboard is sorted ascending
+            score = score != undefined ? score : 0
+            leaderboard = await getLeaderboardUsers(reddit,leaders,user.id,rank,score)
         }
-        leaderboard = leaderboard.sort((a,b)=>b.score - a.score)
         
         return {leaderboard}
     },{depends:index})
