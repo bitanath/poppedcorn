@@ -50,5 +50,5 @@ export interface Similar extends JSONObject{
     similarity: number;
 }
 
-export type NavigationPages = 'cover' | 'game' | 'leaderboard' | 'bonus' | 'emoji' | 'howto'
+export type NavigationPages = 'cover' | 'game' | 'leaderboard' | 'preferences' | 'emoji' | 'howto'
 

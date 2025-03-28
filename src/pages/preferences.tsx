@@ -2,7 +2,7 @@ import {Devvit} from '@devvit/public-api'
 import { PixelText } from '../libs/pixels.js';
 import { NavigationPages } from '../libs/types.js';
 
-export const HowTo = (props: {pager:(name:NavigationPages)=>void,dimensions:{width:number,height:number}}):JSX.Element=>{
+export const Preferences = (props: {pager:(name:NavigationPages)=>void,dimensions:{width:number,height:number}}):JSX.Element=>{
     let howTos:object[] = [
         {
 

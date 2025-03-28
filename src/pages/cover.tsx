@@ -39,8 +39,8 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
           <button appearance="secondary" onPress={() => setPage("leaderboard")}>
             ⭐️ Leaderboard
           </button>
-          <button appearance="media" onPress={() => {setPage('howto');}}>
-            🤔 How To
+          <button appearance="media" onPress={() => {setPage('preferences');}}>
+            ⚙️ Preferences
             </button>
           <button appearance="primary" disabled={loading} onPress={() => { setPage("game") }}>
             🍿 Let's Plaaay!

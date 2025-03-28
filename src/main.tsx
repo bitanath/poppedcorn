@@ -8,7 +8,7 @@ import { Cover } from './pages/cover.js';
 import { Game } from './pages/game.js';
 // import { Bonus } from './pages/bonus.js';
 import { calculatePercentage,compareStrings,getLeaderboardUsers } from './processing.js';
-import { HowTo } from './pages/howto.js';
+import { Preferences } from './pages/preferences.js';
 
 Devvit.configure({
   redditAPI: true,
@@ -163,10 +163,10 @@ Devvit.addCustomPostType({
         return (<Cover setPage={setPage} message={message} loading={loading} version={version}></Cover>)
       case 'leaderboard':
         return (<Leaderboard reddit={_context.reddit} redis={_context.redis} pager={setPage} navigation={openLink}></Leaderboard>)
-      // case 'bonus':
-      //   return (<Bonus setPage={setPage} dimensions={dimensions} context={_context.reddit}></Bonus>)
-      case 'howto':
-        return (<HowTo pager={setPage} dimensions={dimensions}></HowTo>)
+      // case 'howto':
+      //   return (<HowTo pager={setPage} dimensions={dimensions}></HowTo>)
+      case 'preferences':
+        return (<Preferences pager={setPage} dimensions={dimensions}></Preferences>)
       default:
         return (<Game pageIndex={pageIndex} setIndex={setPageIndex} loading={loading} dimensions={dimensions} setPage={setPage} addLetter={addLetter} guess={guess} message={message} version={version} clicked={clicked} isCelebrating={celebration}></Game>)
     }

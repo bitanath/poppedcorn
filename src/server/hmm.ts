@@ -1,23 +1,24 @@
 /**
- * Hidden Markov Model for Word Completion
+ * TODO: Copilot Generated Hidden Markov Model for Word Completion given letters and length parameters. Work this as a base.
+ * 
  * 
  * This model generates words with some fixed letters and predicts the missing ones
  * based on English letter transition probabilities.
  */
 
 interface TransitionProbabilities {
-    [key: string]: number;
-  }
+  [key: string]: number;
+}
+
+interface TransitionMap {
+  [key: string]: TransitionProbabilities;
+}
+
+interface WordDictionary {
+  [key: number]: string[];
+}
   
-  interface TransitionMap {
-    [key: string]: TransitionProbabilities;
-  }
-  
-  interface WordDictionary {
-    [key: number]: string[];
-  }
-  
-  class HiddenMarkovModel {
+export class HiddenMarkovModel {
     private transitions: TransitionMap;
     private initialProbs: TransitionProbabilities;
     private wordsByLength: WordDictionary;
