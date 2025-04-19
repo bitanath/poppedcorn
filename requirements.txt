@@ -1,0 +1,6 @@
+torch
+torchvision
+ipykernel
+opencv-python
+pillow
+blend-modes 

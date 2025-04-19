@@ -5,6 +5,7 @@ export type Navigation = {
     message: {username: string,selected: Movie, emoji:string[], similar: Array<any>, difficulty: number, score: number, rank: number} | null;
     loading: boolean;
     version: string;
+    dimensions: {width:number,height:number};
 }
 
 export type GameNavigation = Navigation & {

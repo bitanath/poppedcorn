@@ -2,7 +2,7 @@ import {Devvit} from '@devvit/public-api'
 import { Navigation } from '../libs/types.js'
 import { PixelText } from '../libs/pixels.js';
 
-export const Cover = ({setPage,message,loading,version}: Navigation)=>(
+export const Cover = ({setPage,message,loading,version,dimensions}: Navigation)=>(
     <zstack height="100%" width="100%" backgroundColor='#570606'>
       <image url="starburst.jpg" imageHeight="1000px" imageWidth="650px" height="100%" width="100%" resizeMode='cover'></image> 
        <vstack height="100%" width="100%" gap='small' alignment="center middle">
@@ -11,13 +11,10 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
         <image
           url="logo_no_text.png"
           description="logo"
-          imageHeight={384}
-          imageWidth={384}
-          height="128px"
-          width="128px"
+          imageHeight={128} imageWidth={128} height="128px" width="128px"
         />
         <vstack>
-          <PixelText size={6} color='#FFFFFF'>GUESS THAT</PixelText>
+          <PixelText size={6} color='#FFFFFF'>GUESS THAT</PixelText> 
           <hstack gap="small">
             <PixelText size={7} color="#FF4500">MOVIE</PixelText>
             <PixelText size={7} color="#FF4500">_</PixelText>
@@ -43,7 +40,7 @@ export const Cover = ({setPage,message,loading,version}: Navigation)=>(
             ⚙️ Preferences
             </button>
           <button appearance="primary" disabled={loading} onPress={() => { setPage("game") }}>
-            🍿 Let's Plaaay!
+            🍿 Let's Plaaaay!
           </button>
         </hstack>
       </vstack>

@@ -25,7 +25,7 @@ export const Game = ({clicked,dimensions,guess,message,addLetter,setPage,setInde
        {message !== null && !isCelebrating && <Difficulty progress={message.difficulty}></Difficulty>}
        {message !== null && !isCelebrating && <Answer name={message.selected.name} guess={guess}></Answer>}
        {!isCelebrating && <zstack alignment="center middle">
-            <image url="pixelit.png" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image>
+            <image url="pixelitanime.gif" imageHeight={dimensions.height/2.5} imageWidth={dimensions.width/1.1} resizeMode='fill'></image>
             {message && !emojiMode && <Description height={dimensions.height/2.25} width={dimensions.width/1.25} text={message.selected.description}></Description>}
             {message && emojiMode && <Emoji emoji={message.emoji} height={dimensions.height/2.25} width={dimensions.width/1.25}></Emoji>}
         </zstack>}

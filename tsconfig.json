@@ -1,7 +1,10 @@
 {
   "extends": "@devvit/public-api/devvit.tsconfig.json",
-  "exclude": ["imports/"],
+  "exclude": ["src/imports/","python/"],
   "compilerOptions": {
-    "types": ["node"]
-  }
+    "types": ["node"],
+    "allowJs": true,
+    "disableSizeLimit": true
+  },
+  "outDir": "./dist"
 }

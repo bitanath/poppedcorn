@@ -1,5 +1,4 @@
 import { Devvit, RedditAPIClient } from "@devvit/public-api";
-import { Movie,EmojiMovie,Similar } from "./libs/types.js";
 import { Glyphs } from "./libs/pixels.js";
 
 export function fnv1aHash(str:string) {

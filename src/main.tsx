@@ -1,12 +1,12 @@
 // Learn more at developers.reddit.com/docs
-import { Devvit, useAsync, useState } from '@devvit/public-api';
-import { getMovie } from './server/function.js';
+import { Devvit, useAsync, useState } from '@devvit/public-api'
+import { getMovie,getNextLetter } from './server/function.js'
 
-import { Navigation, Similar,Movie, Leader } from './libs/types.js';
-import { Leaderboard } from './pages/leaderboard.js';
-import { Cover } from './pages/cover.js';
-import { Game } from './pages/game.js';
-// import { Bonus } from './pages/bonus.js';
+import { Navigation, Similar,Movie, Leader } from './libs/types.js'
+import { Leaderboard } from './pages/leaderboard.js'
+import { Cover } from './pages/cover.js'
+import { Game } from './pages/game.js'
+
 import { calculatePercentage,compareStrings,getLeaderboardUsers } from './processing.js';
 import { Preferences } from './pages/preferences.js';
 
@@ -65,6 +65,9 @@ Devvit.addCustomPostType({
       let rank:number|undefined = undefined
       let score:number|undefined = undefined
       let emoji:string[] = []
+
+      let letters =  await getNextLetter("xx")
+      console.log("DEBUG: Got next letter test...",letters)
       
       if(!user || !user.id){
         //NOTE: simply fetch a movie different from the current one if no user signed in (should never happen... unable to test)
@@ -80,7 +83,7 @@ Devvit.addCustomPostType({
           await _context.redis.hSet(message.selected.hash,{[user.id]:'1'}) 
           score = await _context.redis.zScore('leaderboard', user.id)
           rank = await _context.redis.zRank('leaderboard',user.id)
-          const increment = message.difficulty < 30 ? 3 : message.difficulty < 60 ? 2 : 1
+          const increment = message.difficulty < 31 ? 3 : message.difficulty < 60 ? 2 : 1
           if(!score){
             await _context.redis.zAdd('leaderboard',{member:user.id,score:increment})
           }else{
@@ -160,11 +163,9 @@ Devvit.addCustomPostType({
     
     switch(page){
       case 'cover': 
-        return (<Cover setPage={setPage} message={message} loading={loading} version={version}></Cover>)
+        return (<Cover setPage={setPage} message={message} loading={loading} version={version} dimensions={dimensions}></Cover>)
       case 'leaderboard':
-        return (<Leaderboard reddit={_context.reddit} redis={_context.redis} pager={setPage} navigation={openLink}></Leaderboard>)
-      // case 'howto':
-      //   return (<HowTo pager={setPage} dimensions={dimensions}></HowTo>)
+        return (<Leaderboard reddit={_context.reddit} redis={_context.redis} pager={setPage} navigation={openLink} dimensions={dimensions}></Leaderboard>)
       case 'preferences':
         return (<Preferences pager={setPage} dimensions={dimensions}></Preferences>)
       default:

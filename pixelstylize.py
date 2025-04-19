@@ -8,8 +8,6 @@ import blend_modes
 import numpy as np
 import pymeanshift as pms
 
-from kornia.contrib import EdgeDetector
-
 from torchvision import transforms
 from PIL import Image,ImageOps
 from PIL.ImageOps import grayscale
@@ -47,7 +45,7 @@ def seamlessClone(image,background,mask):
 
 
 # NOTE: Custom function to take poster and thumbnail and merge them together while also processing the image
-def stylize(imgpath,thumbpath,birefnet):
+def stylize(imgpath,birefnet,thumbpath=None,withcorn=False):
     img = Image.open(imgpath)
     background = Image.new("RGB",(1024,1024),0)
     resized = img.resize((1024,332))
@@ -64,16 +62,18 @@ def stylize(imgpath,thumbpath,birefnet):
         centroid_x = np.mean(non_zero_pixels[:, 1])  # x-coordinate from top-left
         centroid_y = np.mean(non_zero_pixels[:, 0])  # y-coordinate also from top left
         ltr = centroid_x/640
+    else:
+        ltr = 512/640
 
     composited = img
     style_mask = Image.open("assets/stylemask.png").convert("L")
     styled = Image.composite(composited.convert("RGBA"),Image.new("RGBA",img.size,(0,0,0,0)),style_mask)
     
-    popcorn_name = thumbpath
+    popcorn_name = "assets/logo_no_text.png" if thumbpath is None else thumbpath
     popcorn = Image.open(popcorn_name).convert("RGBA")
     popcorn.thumbnail((512,512))
     if(ltr <= 1.):
-        styled.paste(popcorn,(1280-416,-50),mask=popcorn)
+        withcorn and styled.paste(popcorn,(1280-416,-50),mask=popcorn)
     else:
         if("agree" in popcorn_name or "applause" in popcorn_name or "very-pissed" in popcorn_name or "warning" in popcorn_name or "stop-sign" in popcorn_name or "laughing" in popcorn_name or "rich" in popcorn_name or "treasure" in popcorn_name):
             mirrored = popcorn
@@ -81,7 +81,7 @@ def stylize(imgpath,thumbpath,birefnet):
         else:
             mirrored = ImageOps.mirror(popcorn)
             offset = -50
-        styled.paste(mirrored,(offset,-50),mask=mirrored)
+        withcorn and styled.paste(mirrored,(offset,-50),mask=mirrored)
 
     pmsegmenter = pms.Segmenter()
     pmsegmenter.spatial_radius = 2

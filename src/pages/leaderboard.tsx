@@ -5,7 +5,13 @@ import { NavigationPages } from '../libs/types.js';
 import { getLeaderboardUsers, formatRank, formatGlyphText } from '../processing.js';
 
 
-export const Leaderboard = ({reddit,redis,pager,navigation}: {reddit:RedditAPIClient;redis:RedisClient;pager:(name:NavigationPages)=>void;navigation:(url:string)=>void})=>{
+export const Leaderboard = ({reddit,redis,pager,navigation,dimensions}: 
+        {
+            reddit:RedditAPIClient;
+            redis:RedisClient;pager:(name:NavigationPages)=>void;
+            navigation:(url:string)=>void;
+            dimensions:{width:number,height:number}
+    })=>{
     const [index,setIndex] = useState(0)
 
     const { data: message, loading, error } = useAsync(async () => {

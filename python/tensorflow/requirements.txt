@@ -1,0 +1,4 @@
+tensorflow==2.15.0 
+tensorflow-metal==1.1.0
+tensorflowjs==4.15.0
+ipykernel
